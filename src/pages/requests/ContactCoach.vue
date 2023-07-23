@@ -33,7 +33,7 @@ export default {
             this.$store.dispatch('requests/contactCoach', { //calling the mutation over dispatch method
                 email: this.email,
                 message: this.message,
-                coachId: this.$route.id
+                coachId: this.$route.params.id
             });
             this.$router.replace('/coaches')
         }
