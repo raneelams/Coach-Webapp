@@ -5,10 +5,13 @@
   <section>
     <base-card>
       <div class="controls">
-        <base-button mode="outline" @click="loadCoaches">Refresh</base-button>
-        <base-button v-if="!isCoach" link to="/register">Register as Coach</base-button>
+        <base-button mode="outline" @click="loadCoaches">Refresh</base-button>          
+        <base-button v-if="!isCoach && !isLoading" link to="/register">Register as Coach</base-button>
       </div>
-      <ul v-if="hasCoaches">
+      <div v-if="isLoading">
+          <base-spinner></base-spinner>
+        </div>
+      <ul v-else-if="hasCoaches">
         <coach-item
           v-for="coach in filteredCoaches"
           :key="coach.id"
@@ -34,6 +37,7 @@ export default {
   },
   data() {
     return {
+      isLoading : false,
       activeFilters: {
         frontend: true,
         backend: true,
@@ -61,7 +65,7 @@ export default {
       })
     },
     hasCoaches() {
-      return this.$store.getters["coaches/hasCoaches"];
+      return !this.isLoading && this.$store.getters["coaches/hasCoaches"];
     },
   },
   created() {   //created is a lifecycle hook  of vue js, it is called when this component is created in vue
@@ -71,8 +75,10 @@ export default {
     setFilter(updatedFilters) {
       this.activeFilters = updatedFilters;
     },
-    loadCoaches() {
-      this.$store.dispatch('coaches/loadCoaches') //through we can call the aciton helpers, and loadCoaches is the asyn action name 
+    async loadCoaches() {
+      this.isLoading = true;
+      this.$store.dispatch('coaches/loadCoaches') //through this we can call the aciton helpers, and loadCoaches is the asyn action name 
+      this.isLoading = false;
     }
   }
 };
